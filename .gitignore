@@ -127,3 +127,32 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Customize
+*.vasp
+*.traj
+*.f90
+*.ascii
+log
+input.vasp
+INCAR
+KPOINTS
+POSCAR
+POTCAR
+CONTCAR
+OUTCAR
+REPORT
+IBZKPT
+PCDAT
+OSZICAR
+XDATCAR
+CHG
+CHGCAR
+WAVECAR
+EIGENVAL
+DOSCAR
+input.vasp
+ase-sort.dat
+vasp.out
+vasprun.xml
+slurm-*
