@@ -164,7 +164,7 @@ class FingerPrint(object):
         else:
             lseg = 4
             l = 2
-        ixyz = get_ixyz(lat, cutoff)
+        ixyz = FingerPrint.get_ixyz(lat, cutoff)
         NC = 3
         wc = cutoff / np.sqrt(2.* NC)
         fc = 1.0 / (2.0 * NC * wc**2)
@@ -317,10 +317,12 @@ class FingerPrint(object):
                         r = 0.5/(rcov[iat]**2 + rcov[jat]**2)
                         sji = np.sqrt( 4.0*r*(rcov[iat]*rcov[jat]) )**3 * np.exp(-1.0*d2*r)
                         # Derivative of <s_i | s_j>
-                        D_om[x][iat][jat] = -( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                                       (2.0*r) * d[x] * sji * amp[iat] * amp[jat]              \
-                                       -2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * sji \
-                                       * amp[iat] * amp[jat] * ( kron_delta(iat, D_n) - kron_delta(jat, D_n) )
+                        D_om[x][iat][jat] = \
+                        - ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) * \
+                          (2.0*r) * d[x] * sji * amp[iat] * amp[jat]                                \
+                        - 2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * sji * amp[iat] *   \
+                                                                                       amp[jat] *   \
+                          ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) )
 
         else:
             # for both s and p orbitals
@@ -335,45 +337,51 @@ class FingerPrint(object):
                         r = 0.5/(rcov[iat]**2 + rcov[jat]**2)
                         sji = np.sqrt(4.0*r*rcov[iat]*rcov[jat])**3 * np.exp(-1.0*d2*r)
                         # Derivative of <s_i | s_j>
-                        D_om[x][4*iat][4*jat] = -( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                                       (2.0*r) * d[x] * sji * amp[iat] * amp[jat]                  \
-                                       -2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * sji \
-                                       * amp[iat] * amp[jat] * ( kron_delta(iat, D_n) - kron_delta(jat, D_n) )
+                        D_om[x][4*iat][4*jat] = \
+                        - ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) * \
+                          (2.0*r) * d[x] * sji * amp[iat] * amp[jat]                                \
+                        - 2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * sji * amp[iat] *   \
+                                                                                       amp[jat] *   \
+                          ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) )
 
                         # Derivative of <s_i | p_j>
                         stv = np.sqrt(8.0) * rcov[jat] * r * sji
                         for i_sp in range(3):
                             D_om[x][4*iat][4*jat+i_sp+1] = \
-                            ( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                            stv * amp[iat] * amp[jat] * ( kron_delta(x, i_sp) - \
-                                               np.dot( d[x], d[i_sp] ) * 2.0*r ) \
-                            -2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) \
-                            * stv * d[i_sp] * amp[iat] * amp[jat] * ( kron_delta(iat, D_n) - kron_delta(jat, D_n) )
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) \
+                            * stv * amp[iat] * amp[jat] * ( FingerPrint.kron_delta(x, i_sp)         \
+                                                           - np.dot( d[x], d[i_sp] ) * 2.0 * r )    \
+                          - 2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * stv * d[i_sp] *  \
+                                                                              amp[iat] * amp[jat] * \
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) )
 
                         # Derivative of <p_i | s_j>
                         stv = np.sqrt(8.0) * rcov[iat] * r * sji * -1.0
                         for i_ps in range(3):
                             D_om[x][4*iat+i_ps+1][4*jat] = \
-                            ( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                            stv * amp[iat] * amp[jat] * ( kron_delta(x, i_ps) - \
-                                               np.dot( d[x], d[i_ps] ) * 2.0*r ) \
-                            -2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) \
-                            * stv * d[i_ps] * amp[iat] * amp[jat] * ( kron_delta(iat, D_n) - kron_delta(jat, D_n) )
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) \
+                            * stv * amp[iat] * amp[jat] * ( FingerPrint.kron_delta(x, i_ps)         \
+                                                           - np.dot( d[x], d[i_ps] ) * 2.0 * r )    \
+                          - 2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * stv * d[i_ps] *  \
+                                                                              amp[iat] * amp[jat] * \
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) )
 
                         # Derivative of <p_i | p_j>
-                        stv = -8.0 * rcov[iat] * rcov[jat] * r * r * sji
+                        stv = - 8.0 * rcov[iat] * rcov[jat] * r * r * sji
                         for i_pp in range(3):
                             for j_pp in range(3):
                                 D_om[x][4*iat+i_pp+1][4*jat+j_pp+1] = \
-                                ( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                                d[x] * stv * amp[iat] * amp[jat] * \
-                                ( kron_delta(x, j_pp) - 2.0 * r * d[i_pp] * d[j_pp] ) + \
-                                ( kron_delta(iat, D_n) - kron_delta(jat, D_n) ) * \
-                                stv * amp[iat] * amp[jat] * ( kron_delta(x, i_pp) * d[j_pp] + \
-                                                             kron_delta(x, j_pp) * d[i_pp] )  \
-                                -2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * stv * \
-                                ( np.dot(d[i_pp], d[j_pp]) - kron_delta(i_pp, j_pp) * 0.5/r ) \
-                                * amp[iat] * amp[jat] * ( kron_delta(iat, D_n) - kron_delta(jat, D_n) )
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) \
+                            * d[x] * stv * amp[iat] * amp[jat] *                                    \
+                            ( FingerPrint.kron_delta(x, j_pp) - 2.0 * r * d[i_pp] * d[j_pp] ) +     \
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) ) \
+                            * stv * amp[iat] * amp[jat] * ( FingerPrint.kron_delta(x, i_pp) *       \
+                                              d[j_pp] + FingerPrint.kron_delta(x, j_pp) * d[i_pp] ) \
+                          - 2.0 * NC * fc * dnc[x] * (1.0 - dnc2 * fc)**(NC - 1) * stv *            \
+                            ( np.dot(d[i_pp], d[j_pp]) -                                            \
+                                                       FingerPrint.kron_delta(i_pp, j_pp) * 0.5/r ) \
+                            * amp[iat] * amp[jat] *                                                 \
+                            ( FingerPrint.kron_delta(iat, D_n) - FingerPrint.kron_delta(jat, D_n) )
 
         return D_om
     

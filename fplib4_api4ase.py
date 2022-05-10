@@ -264,7 +264,7 @@ class fp_GD_Calculator(Calculator):
             # write_vasp('input.vasp', atoms, direct=True)
             lat = atoms.cell[:]
             rxyz = atoms.get_positions()
-            types = fplib4.read_types('POSCAR')
+            types = self.FP.read_types('POSCAR')
             # self.get_potential_energy(atoms) 
             
         znucl = np.array([3], int)
@@ -276,7 +276,7 @@ class fp_GD_Calculator(Calculator):
             # write_vasp('input.vasp', atoms, direct=True)
             lat = atoms.cell[:]
             rxyz = atoms.get_positions()
-            types = fplib4.read_types('POSCAR')
+            types = self.FP.read_types('POSCAR')
             # self.get_potential_energy(atoms)
             
         znucl = np.array([3], int)
@@ -288,7 +288,7 @@ class fp_GD_Calculator(Calculator):
             # write_vasp('input.vasp', atoms, direct=True)
             lat = atoms.cell[:]
             pos = atoms.get_scaled_positions()
-            types = fplib4.read_types('POSCAR')
+            types = self.FP.read_types('POSCAR')
             # self.get_potential_energy(atoms)
             
         # stress = self.FP.get_FD_stress(lat, pos, types, znucl)
