@@ -207,7 +207,7 @@ class FingerPrint(object):
                                     icenter = n_sphere - 1
                                 else:
                                     ityp_sphere = types[jat]
-                                '''
+                                
                                 for il in range(lseg):
                                     if il == 0:
                                         # print len(ind)
@@ -216,8 +216,7 @@ class FingerPrint(object):
                                         ind[il+lseg*(n_sphere-1)] = ityp_sphere * l
                                     else:
                                         ind[il+lseg*(n_sphere-1)] = ityp_sphere * l + 1
-                                        # ind[il+lseg*(n_sphere-1)] == ityp_sphere * l + 1
-                                '''
+                                
             n_sphere_list.append(n_sphere)
             rxyz_sphere = np.array(rxyz_sphere, float)
         # for n_iter in range(nx-n_sphere+1):
@@ -459,13 +458,13 @@ class FingerPrint(object):
         else:
             lseg = 4
             # l = 2
-        # amp, n_sphere, icenter, rxyz_sphere, rcov_sphere = \
-        #               get_sphere(ntyp, nx, lmax, lat, rxyz, types, znucl, cutoff, iat)
+        amp, n_sphere, icenter, rxyz_sphere, rcov_sphere = \
+                      get_sphere(ntyp, nx, lmax, lat, rxyz, types, znucl, cutoff, iat)
         # om = get_gom(lseg, rxyz_sphere, rcov_sphere, amp)
         # lamda_om, Varr_om = np.linalg.eig(om)
         # lamda_om = np.real(lamda_om)
         # N_vec = len(Varr_om[0])
-        nat = len(rxyz)
+        nat = len(rxyz_sphere)
         D_fp_mat = np.zeros((3, nx*lseg, nat)) + 1j*np.zeros((3, nx*lseg, nat))
         for i in range(3*nat):
             D_n = i // 3
@@ -495,6 +494,7 @@ class FingerPrint(object):
         d = fp1 - fp2
         return np.sqrt(np.vdot(d, d))
     
+    @staticmethod
     def get_fpdist(self, types, fp1, fp2, mx = False):
         ntyp = self.ntyp
         nat, lenfp = np.shape(fp1)
@@ -674,7 +674,10 @@ class FingerPrint(object):
                     del_fp[0] = temp_sum[0]
                     del_fp[1] = temp_sum[1]
                     del_fp[2] = temp_sum[2]
-                    fpdist_temp_num = fpdist_error + fplib_GD.get_fpdist(ntyp, types, fp_iat, fp_jat)
+                    fp_iat = self.get_fp(lat, rxyz, types, znucl, i_atom)
+                    fp_jat = self.get_fp(lat, rxyz, types, znucl, j_atom)
+                    dfp_ij = fp_iat - fp_jat
+                    fpdist_temp_num = fpdist_error + np.matmul(dfp_ij.T, dfp_ij)
                     fpdist_temp_sum = fp_dist + fpdist_temp_num
                     fpdist_error = fpdist_temp_num - (fpdist_temp_sum - fp_dist)
                     fp_dist = fpdist_temp_sum
@@ -693,7 +696,11 @@ class FingerPrint(object):
                                         2.0*np.real( np.matmul( diff_fp.T, diff_D_fp_y ) )
                     del_fp[i_atom][2] = del_fp[i_atom][2] + \
                                         2.0*np.real( np.matmul( diff_fp.T, diff_D_fp_z ) )
-                    # fp_dist = fp_dist + get_fpdist(ntyp, types, fp_iat, fp_jat)
+                    
+                    # fp_iat = self.get_fp(lat, rxyz, types, znucl, i_atom)
+                    # fp_jat = self.get_fp(lat, rxyz, types, znucl, j_atom)
+                    # dfp_ij = fp_iat - fp_jat
+                    # fp_dist = fp_dist + np.matmul(dfp_ij.T, dfp_ij)
 
                     # print("del_fp = ", del_fp)
                     # rxyz[i_atom] = rxyz[i_atom] - step_size*del_fp
