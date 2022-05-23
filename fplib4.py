@@ -564,10 +564,8 @@ class FingerPrint(object):
             #         if abs(omx[i][j] - omx[j][i]) > 1e-6:
             #             print ("ERROR", i, j, omx[i][j], omx[j][i])
             # print omx
-            # sfp0 = np.linalg.eigvals(omx)
-            # sfp.append(sorted(sfp0))
-            sfp = np.linalg.eigvals(omx)
-            sfp.append(sorted(sfp))
+            sfp0 = np.linalg.eigvals(omx)
+            sfp.append(sorted(sfp0))
 
         # print ("n_sphere_min", min(n_sphere_list))
         # print ("n_shpere_max", max(n_sphere_list)) 
