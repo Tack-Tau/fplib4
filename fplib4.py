@@ -141,7 +141,7 @@ class FingerPrint(object):
         cutoff = self.cutoff
         amp_j, n_sphere_j, icenter_j, rxyz_sphere_j, rcov_sphere_j = \
                     self.get_sphere(lat, rxyz, types, znucl, jat)
-        i_sphere_count = 0
+        iat_j = 0
         nat_j_sphere = len(rxyz_sphere_j)
         iat_in_j_sphere = False
         rxyz_list = rxyz.tolist()
@@ -149,9 +149,14 @@ class FingerPrint(object):
         for j in range(nat_j_sphere):
             if rxyz_list[iat] == rxyz_sphere_j_list[j]:
                 iat_in_j_sphere = True
-                return iat_in_j_sphere, j
+                iat_j = j
+                break
             else:
-                return iat_in_j_sphere, j
+                # iat_in_j_sphere = False
+                # iat_j = 0
+                # continue
+                pass
+        return iat_in_j_sphere, iat_j
             
     def get_sphere(self, lat, rxyz, types, znucl, iat):
         ntyp = self.ntyp
